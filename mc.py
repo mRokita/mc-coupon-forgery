@@ -21,6 +21,8 @@ def create_coupon(date, code, coupon_type):
     file = None
     if coupon_type == "fryty":
         file = "mc_fryty.jpg"
+    elif coupon_type == "cheese":
+        file = "mc_cheese.jpg"
     elif coupon_type == "burger":
         file = "mc.jpg"
     src = Image.open(file)
@@ -44,7 +46,7 @@ def generate_random_coupon(coupon_type):
 
 @app.route('/<coupon_type>.jpg')
 def coupon(coupon_type):
-    if coupon_type not in ("fryty", "burger"):
+    if coupon_type not in ("fryty", "burger", "cheese"):
         abort(404)
     img_io = BytesIO()
     src = generate_random_coupon(coupon_type)
@@ -55,7 +57,7 @@ def coupon(coupon_type):
 
 @app.route('/')
 def index():
-    return '<html><head><title>Kupony do mc</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><a href="/burger.jpg"><h4>Hamburger<h4></a><a href="/fryty.jpg"><h4>Frytki<h4></a></body></html>'
+    return '<html><head><title>Kupony do mc</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><a href="/burger.jpg"><h4>Hamburger/Lody<h4></a><a href="/cheese.jpg"><h4>Cheeseburger<h4></a><a href="/fryty.jpg"><h4>Frytki<h4></a></body></html>'
 
 if __name__ == "__main__":
     app.run('0.0.0.0', '6969')

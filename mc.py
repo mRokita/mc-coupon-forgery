@@ -5,7 +5,7 @@ from random import choice
 from datetime import datetime, timedelta
 from time import strftime
 
-from flask import Flask, send_file
+from flask import Flask, send_file, abort
 from PIL import Image, ImageFont, ImageDraw
 
 app = Flask(__name__)
@@ -17,8 +17,13 @@ def write_text(draw, x, y, text, font):
     draw.text((x, y), text, (0, 0, 0), font=font)
 
 
-def create_coupon(date, code):
-    src = Image.open("mc.jpg")
+def create_coupon(date, code, coupon_type):
+    file = None
+    if coupon_type == "fryty":
+        file = "mc_fryty.jpg"
+    elif coupon_type == "burger":
+        file = "mc.jpg"
+    src = Image.open(file)
     font = ImageFont.truetype("opensans.ttf", size=22)
     draw = ImageDraw.Draw(src)
     date_x = 242
@@ -30,21 +35,27 @@ def create_coupon(date, code):
     return src
 
 
-def generate_random_coupon():
+def generate_random_coupon(coupon_type):
     date = datetime.strftime(datetime.today()-timedelta(days=1), "%d-%m-%Y")
     code = ''.join([choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") for i in range(12)])
-    src = create_coupon(date, code)
+    src = create_coupon(date, code, coupon_type)
     return src
 
 
-@app.route('/')
-def index():
+@app.route('/<coupon_type>.jpg')
+def coupon(coupon_type):
+    if coupon_type not in ("fryty", "burger"):
+        abort(404)
     img_io = BytesIO()
-    src = generate_random_coupon()
+    src = generate_random_coupon(coupon_type)
     src.save(img_io, format="JPEG")
     img_io.seek(0)
     return send_file(img_io, mimetype="image/jpeg")
 
+
+@app.route('/')
+def index():
+    return '<html><head><title>Kupony do mc</title></head><body><a href="/burger.jpg"><h4>Hamburger<h4></a><a href="/fryty.jpg"><h4>Frytki<h4></a></body></html>'
 
 if __name__ == "__main__":
     app.run('0.0.0.0', '6969')

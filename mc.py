@@ -55,7 +55,7 @@ def coupon(coupon_type):
 
 @app.route('/')
 def index():
-    return '<html><head><title>Kupony do mc</title></head><body><a href="/burger.jpg"><h4>Hamburger<h4></a><a href="/fryty.jpg"><h4>Frytki<h4></a></body></html>'
+    return '<html><head><title>Kupony do mc</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><a href="/burger.jpg"><h4>Hamburger<h4></a><a href="/fryty.jpg"><h4>Frytki<h4></a></body></html>'
 
 if __name__ == "__main__":
     app.run('0.0.0.0', '6969')
